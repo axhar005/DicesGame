@@ -13,7 +13,11 @@ Welcome to **DicesGame**, a fun and strategic dice game where players compete to
 - [Contributing](#contributing)
 - [License](#license)
 
+
+
 ## How to Play
+
+<img src="https://imgur.com/RwKyoFx.gif" alt="visualizer image" width="600">
 
 The objective of DicesGame is to roll the dice and select them to maximize your score. You can reroll non-selected dice to try and improve your score, or end your turn when you are satisfied with the points you've earned.
 
@@ -26,6 +30,8 @@ Only the numbers 1 and 5 have direct point values. For other numbers, you need t
 - **Add Dice + End Turn**: Press **F** to add the selected dice to your score and end your turn.
 - **Show Help**: Press **H** to display the help menu. Press **H** again to close it.
 - **Quit the Game**: Press **Q** to quit the game.
+
+<img src="https://imgur.com/Tr5Pxzw.gif" alt="visualizer image" width="600">
 
 ## Scoring Rules
 
@@ -63,6 +69,10 @@ Points are earned based on the number rolled and specific combinations of dice:
 	+---+ +---+ +---+ +---+
 	Score: (4 × 100) × 2 = 800 points
 	```
+
+<img src="https://imgur.com/xWKkSpU.gif" alt="visualizer image" width="600">
+<img src="https://imgur.com/St0lYoP.gif" alt="visualizer image" width="600">
+
 
 ## Controls
 
