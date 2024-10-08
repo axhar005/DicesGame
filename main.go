@@ -94,12 +94,12 @@ const (
 	GAME
 )
 
-func roll(dice_number int) []int {
-	var new_set []int
-	for j := 0; j < dice_number; j++ {
-		new_set = append(new_set, rand.Intn(6)+1)
+func roll(diceNumber int) []int {
+	var newSet []int
+	for j := 0; j < diceNumber; j++ {
+		newSet = append(newSet, rand.Intn(6)+1)
 	}
-	return new_set
+	return newSet
 }
 
 func asciiDice(dice int) []string {
@@ -154,8 +154,8 @@ func printDices(dices [][]int, selectedDices []int, selected int) {
 	}
 }
 
-func leaderboard(playerScore [2]int, playerName [2]string, current_player int, tmpScore int) {
-	player := ">>> " + playerName[current_player] + " <<<"
+func leaderboard(playerScore [2]int, playerName [2]string, currentPlayer int, tmpScore int) {
+	player := ">>> " + playerName[currentPlayer] + " <<<"
 	fmt.Print("\033[H\033[2J")
 	fmt.Println(strings.Repeat("-", 86))
 	fmt.Printf("%s\n", centerText("Player Turn", 86))
@@ -177,18 +177,19 @@ func helper(){
 func winner(playerName string){
 	fmt.Println(strings.Repeat("-", 86))
 	fmt.Printf("%s\n", centerText("Winner : " + playerName, 86))
+	fmt.Printf("%s\n", centerText("Press any key to replay.", 86))
 	fmt.Println(strings.Repeat("-", 86))
 }
 
 func scoreCount(slice []int) int{
 	var count int
-	count_dice := make(map[int]int)
+	countDice := make(map[int]int)
 	
 	for _, value := range slice {
-		count_dice[value]++
+		countDice[value]++
 	}
 
-	for key, value := range count_dice {
+	for key, value := range countDice {
 		multiplier := 100 * key
 		switch value {
 		case 1, 2:
@@ -219,9 +220,9 @@ func scoreCount(slice []int) int{
 }
 
 func takeDicesAndReroll(dices *[][]int, selectedDices *[]int) []int{
-	empty_row_index := -1
-	select_len := len(*selectedDices)
-	dice_len := len((*dices)[0])
+	emptyRowIndex := -1
+	selectLen := len(*selectedDices)
+	diceLen := len((*dices)[0])
 
 	// security
 	if *selectedDices == nil || dices == nil{
@@ -231,40 +232,50 @@ func takeDicesAndReroll(dices *[][]int, selectedDices *[]int) []int{
 	// find the empty row
 	for i, row := range *dices {
 		if row == nil{
-			empty_row_index = i;
+			emptyRowIndex = i;
 			break
 		}
 	}
-	if empty_row_index == -1{
+	if emptyRowIndex == -1{
 		return nil
 	}
 
 	// moving dices to the empty row
 	for i, dice := range (*dices)[0] {
 		if contains((*selectedDices), i){
-			(*dices)[empty_row_index] = append((*dices)[empty_row_index], dice)
+			(*dices)[emptyRowIndex] = append((*dices)[emptyRowIndex], dice)
 		}
 	}
 
 	// reroll dices
-	(*dices)[0] = roll(dice_len - select_len)
+	(*dices)[0] = roll(diceLen - selectLen)
 	*selectedDices = (*selectedDices)[:0]
-	return (*dices)[empty_row_index]
+	return (*dices)[emptyRowIndex]
 }
 
-func change_player(current_player *int){
-	if *current_player == 0 {
-		*current_player = 1 
-	}else if *current_player == 1 {
-		 *current_player = 0 
+func changePlayer(currentPlayer *int){
+	if *currentPlayer == 0 {
+		*currentPlayer = 1 
+	}else if *currentPlayer == 1 {
+		 *currentPlayer = 0 
 	}
 }
 
-func reset(dices *[][]int, selectedDices *[]int, tmpScore *int, current_player *int){
+func reset(dices *[][]int, selectedDices *[]int, tmpScore *int, currentPlayer *int){
 	if (dices != nil) { *dices = make([][]int, 8); (*dices)[0] = roll(6) }
 	if (selectedDices != nil) { *selectedDices = make([]int, 0) }
 	if (tmpScore != nil) { *tmpScore = 0 }
-	if (tmpScore != nil) { change_player(current_player) }
+	if (tmpScore != nil) { changePlayer(currentPlayer) }
+}
+
+func resetGame(dices *[][]int, selectedDices *[]int, tmpScore *int, currentPlayer *int, state *int, selected *int, playerScore *[2]int){
+	if (dices != nil) { *dices = make([][]int, 8); (*dices)[0] = roll(6) }
+	if (selectedDices != nil) { *selectedDices = make([]int, 0) }
+	if (tmpScore != nil) { *tmpScore = 0 }
+	if (currentPlayer != nil) { *currentPlayer = 0; }
+	if (state != nil) { *state = HELP }
+	if (selected != nil) { *selected = 0 }
+	if (playerScore != nil) { *playerScore = [2]int{} }
 }
 
 func main() {
@@ -357,7 +368,12 @@ func main() {
 				state = HELP
 			}
 			if (playerScore[0] >= MAXSCORE || playerScore[1] >= MAXSCORE){ state = WINNER }
+		case WINNER:
+			if key > 0 || char > 0{
+				resetGame(&dices, &selectedDices, &tmpScore, &currentPlayer, &state, &selected, &playerScore)
+			}
 		}
+
 		if char == 'q' || key == keyboard.KeyEsc {
 			break
 		}
